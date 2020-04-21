@@ -1,5 +1,3 @@
-// RSA.cpp : RSA.
-//
 
 //#include "stdafx.h"
 #include <iostream>
@@ -8,9 +6,7 @@
 #include <iomanip>
 using namespace std;
 
-/////////////////////////////////////////////////////////////////////
-//Алгоритм "решето Сундарама". Выбирает все простые числа
-//до заданного (случайно сгенерированного).
+
 int sundaram(int n)
 {
 	int *a = new int[n], i, j, k;
@@ -20,7 +16,7 @@ int sundaram(int n)
 		for (j = 1; (k = i + j + 2 * i*j) < n && j <= i; j++)
 			a[k] = 1;
 	}
-	//Выбирает из списка простых чисел ближайшее к заданному.
+
 	for (i = n - 1; i >= 1; i--)
 		if (a[i] == 0)
 		{
@@ -29,10 +25,7 @@ int sundaram(int n)
 		}
 	delete[] a;
 }
-/////////////////////////////////////////////////////////////////////
-//Алгоритм Евклида. Алгоритм для нахождения наибольшего
-//общего делителя двух целых чисел. Используется для проверки
-//чисел на взаимопростоту.
+
 int gcd(int a, int b)
 {
 	int c;
@@ -44,48 +37,42 @@ int gcd(int a, int b)
 	}
 	return abs(a);
 }
-/////////////////////////////////////////////////////////////////////
+
 int main()
 {
 
-	// Генерация двух чисел и выбор двух простых чисел.
+
 	srand((unsigned)time(NULL));
 	int p = rand() % 100;
 	int q = rand() % 100;
 	int p_simple = sundaram(p);
 	int q_simple = sundaram(q);
-	//Находим число n.
 	unsigned int n = p_simple * q_simple;
-	//Генерация числа d и проверка его на взаимопростоту
-	//с числом ((p_simple-1)*(q_simple-1)).
 	int d, d_simple = 0;
 	while (d_simple != 1)
 	{
 		d = rand() % 100;
 		d_simple = gcd(d, ((p_simple - 1)*(q_simple - 1)));
 	}
-	//Определение числа e, для которого является истинным
-	//соотношение (e*d)%((p_simple-1)*(q_simple-1))=1.
 	unsigned int e = 0, e_simple = 0;
 	while (e_simple != 1)
 	{
 		e += 1;
 		e_simple = (e*d) % ((p_simple - 1)*(q_simple - 1));
 	}
-	//Сгенерированные ключи.
+
 	cout << '{' << e << ','  << n << '}' << " - Open key" << endl;
 	cout << '{'  << d << ',' << n << '}' << " - Secret key" << endl << endl;
-	//Ввод шифруемых данных.
+
 	int MAX = 32;
 	char *Text = new char[MAX];
 	cout << "Please enter the Text. Use <Enter> button when done." << endl;
 	cin.get(Text, MAX);
 
-	//Массив для хранения шифротекста.
+
 	unsigned int *CryptoText = new unsigned int[MAX];
 	unsigned int *Tdecrypt = new unsigned int[MAX];
-	//Получение из введённых данных десятичного кода ASCII и
-	//дальнейшее его преобразование по формуле ci = (mj^e)%n.
+
 	int b = 301;
 	int c;
 
@@ -103,8 +90,7 @@ int main()
 		CryptoText[j] = c;
 		b += 1;
 	}
-	//Расшифровка полученного кода по формуле mi = (ci^d)%n
-	//и перевод его в десятичный код ASCII.
+
 	b = 301;
 	int m;
 	for (int j = 0; j < MAX; j++)
